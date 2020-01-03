@@ -4,6 +4,11 @@ const router = express.Router();
 const bodyParser = require("body-parser");
 const db = require('./app/database/db.js');
 
+var cors = require('cors');
+
+// Then use it before your routes are set up:
+app.use(cors());
+
 //Parse Params
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
