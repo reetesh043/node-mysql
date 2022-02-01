@@ -5,8 +5,8 @@ const User = db.user;
 const Role = db.role;
 const Op = db.Sequelize.Op;
 const jwt = require('jsonwebtoken');
-
 var bcrypt = require('bcryptjs');
+const maxAge = 3 * 24 * 60 * 60;
 
 exports.signup = (req, res, next) => {
 	// Save User to Database
@@ -43,40 +43,13 @@ exports.signin = (req, res, next) => {
 		if (!passwordIsValid) {
 			return res.status(401).send({ auth: false, accessToken: null, reason: "Invalid Password!" });
 		}
-
-		var token = jwt.sign({ id: user.id }, config.secret, {
-		  expiresIn: 86400 // expires in 24 hours
-		});
-
+		const token = jwt.sign({ id: user.id }, config.secret, {
+			expiresIn: maxAge
+		})
+		res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
 		res.status(200).send({ auth: true, accessToken: token });
 
 	}).catch(err => {
 		res.status(500).send('Error -> ' + err);
 	});
 }
-
-exports.user_delete = (req, res, next) => {
-  User.destroy({
-		where: {
-			id: req.params.userId
-		}
-	}).then(user => {
-		console.log(user);
-		if(user) {
-			  res.status(200).json({
-				message: "User deleted"
-			  });
-		}else {
-			  res.status(200).json({
-				message: "Usuario nao existe"
-			  });
-		}
-
-    })
-    .catch(err => {
-      console.log(err);
-      res.status(500).json({
-        error: err
-      });
-    });
-};

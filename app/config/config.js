@@ -1,3 +1,3 @@
 module.exports = {
-  'secret': 'grokonez-super-secret-key'
+  'secret': 'super-secret-key'
 };
